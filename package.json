@@ -1,0 +1,25 @@
+{
+  "name": "worker-web-scraper",
+  "version": "1.0.0",
+  "description": "通用网页爬虫 Worker，支持自定义 JavaScript 提取数据、链接发现和深度控制",
+  "main": "main.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node main.js",
+    "test": "node main.js"
+  },
+  "keywords": [
+    "scraper",
+    "crawler",
+    "web-scraper",
+    "puppeteer",
+    "cafescraper"
+  ],
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@grpc/grpc-js": "^1.13.4",
+    "google-protobuf": "^4.0.0",
+    "puppeteer": "^24.0.0"
+  }
+}

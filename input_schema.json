@@ -1,0 +1,96 @@
+{
+  "description": "Universal web scraper with link discovery and depth control. | 通用网页爬虫，支持链接发现和深度控制。",
+  "b": "url",
+  "properties": [
+    {
+      "title": "起始 URL | Starting URLs",
+      "name": "url",
+      "type": "array",
+      "editor": "requestList",
+      "description": "要爬取的起始 URL 列表 | List of starting URLs to crawl",
+      "default": [
+        { "url": "https://example.com" }
+      ],
+      "required": true
+    },
+    {
+      "title": "最大爬取深度 | Max Depth",
+      "name": "maxCrawlingDepth",
+      "type": "integer",
+      "editor": "number",
+      "description": "从起始 URL 开始的最大爬取深度（起始页面深度为 0）| Maximum crawl depth from starting URLs (starting page = depth 0)",
+      "default": 1,
+      "required": true
+    },
+    {
+      "title": "最大页面数 | Max Pages",
+      "name": "maxPagesPerCrawl",
+      "type": "integer",
+      "editor": "number",
+      "description": "每次运行最多爬取的页面数量（0 表示不限制）| Maximum pages to crawl per run (0 = unlimited)",
+      "default": 10
+    },
+    {
+      "title": "页面加载超时 | Page Timeout (secs)",
+      "name": "pageLoadTimeoutSecs",
+      "type": "integer",
+      "editor": "number",
+      "description": "页面加载的最长等待时间（秒）| Maximum time to wait for page load (seconds)",
+      "default": 60
+    },
+    {
+      "title": "等待条件 | Wait Condition",
+      "name": "waitUntil",
+      "type": "string",
+      "editor": "select",
+      "description": "页面导航完成条件 | Navigation completion condition",
+      "default": "networkidle2",
+      "allowedValues": [
+        "load",
+        "domcontentloaded",
+        "networkidle0",
+        "networkidle2"
+      ]
+    },
+    {
+      "title": "注入 jQuery | Inject jQuery",
+      "name": "injectJQuery",
+      "type": "boolean",
+      "editor": "switch",
+      "description": "是否在每个页面注入 jQuery 库 | Inject jQuery library into each page",
+      "default": false
+    },
+    {
+      "title": "忽略 SSL 错误 | Ignore SSL Errors",
+      "name": "ignoreSslErrors",
+      "type": "boolean",
+      "editor": "switch",
+      "description": "是否忽略 SSL 证书错误 | Ignore SSL certificate errors",
+      "default": true
+    },
+    {
+      "title": "下载媒体资源 | Download Media",
+      "name": "downloadMedia",
+      "type": "boolean",
+      "editor": "switch",
+      "description": "是否下载图片、视频等媒体资源（关闭可提高速度）| Download images, videos and other media (disable for faster crawling)",
+      "default": false
+    },
+    {
+      "title": "下载 CSS | Download CSS",
+      "name": "downloadCss",
+      "type": "boolean",
+      "editor": "switch",
+      "description": "是否下载 CSS 样式表（关闭可提高速度）| Download CSS stylesheets (disable for faster crawling)",
+      "default": true
+    },
+    {
+      "title": "调试日志 | Debug Log",
+      "name": "debugLog",
+      "type": "boolean",
+      "editor": "switch",
+      "description": "是否输出详细的调试日志 | Enable detailed debug logging",
+      "default": false
+    }
+  ]
+}
