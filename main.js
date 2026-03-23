@@ -46,17 +46,31 @@ class WebScraper {
     async init() {
         await cafesdk.log.info('初始化 Web Scraper Worker...')
         
-        // 获取 CDP endpoint
-        const cdpEndpoint = process.env.CDP_ENDPOINT || process.env.BROWSER_WS_ENDPOINT
-        if (!cdpEndpoint) {
-            throw new Error('未找到 CDP endpoint，请确保环境变量 CDP_ENDPOINT 或 BROWSER_WS_ENDPOINT 已设置')
+        // CafeScraper 平台: 使用 PROXY_AUTH 环境变量构建 CDP 连接地址
+        const proxyAuth = process.env.PROXY_AUTH
+        let browserWSEndpoint
+        
+        if (proxyAuth) {
+            // CafeScraper 平台环境
+            browserWSEndpoint = `ws://${proxyAuth}@chrome-ws-inner.cafescraper.com`
+            await cafesdk.log.info('使用 CafeScraper 平台远程浏览器')
+        } else if (process.env.CDP_ENDPOINT) {
+            // 兼容其他环境变量
+            browserWSEndpoint = process.env.CDP_ENDPOINT
+            await cafesdk.log.info('使用 CDP_ENDPOINT 环境变量')
+        } else if (process.env.BROWSER_WS_ENDPOINT) {
+            // 兼容其他环境变量
+            browserWSEndpoint = process.env.BROWSER_WS_ENDPOINT
+            await cafesdk.log.info('使用 BROWSER_WS_ENDPOINT 环境变量')
+        } else {
+            throw new Error('未找到浏览器连接配置。请确保环境变量 PROXY_AUTH 已设置（CafeScraper 平台自动注入）')
         }
         
-        await cafesdk.log.info(`连接到远程浏览器: ${cdpEndpoint}`)
+        await cafesdk.log.info(`连接到远程浏览器...`)
         
         // 连接到远程浏览器
         this.browser = await puppeteer.connect({
-            browserWSEndpoint: cdpEndpoint,
+            browserWSEndpoint: browserWSEndpoint,
             defaultViewport: null,
             ignoreHTTPSErrors: this.config.ignoreSslErrors
         })

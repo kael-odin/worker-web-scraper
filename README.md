@@ -277,9 +277,9 @@ Check that `input_schema.json` uses supported editor types. The `input` and `tex
 <details>
 <summary>CDP Connection Failed | CDP 连接失败</summary>
 
-Ensure the environment variable `CDP_ENDPOINT` or `BROWSER_WS_ENDPOINT` is correctly set. Contact platform support if the issue persists.
+The platform automatically injects `PROXY_AUTH` environment variable. The worker connects to `ws://{PROXY_AUTH}@chrome-ws-inner.cafescraper.com`. If connection fails, verify that the script is running on CafeScraper platform.
 
-确保环境变量 `CDP_ENDPOINT` 或 `BROWSER_WS_ENDPOINT` 已正确设置。如问题持续，请联系平台支持。
+平台会自动注入 `PROXY_AUTH` 环境变量。Worker 连接到 `ws://{PROXY_AUTH}@chrome-ws-inner.cafescraper.com`。如果连接失败，请确认脚本正在 CafeScraper 平台上运行。
 
 </details>
 
