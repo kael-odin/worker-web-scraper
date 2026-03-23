@@ -33,6 +33,25 @@ const DEFAULT_CONFIG = {
 // 默认链接选择器（发现页面中的所有链接）
 const LINK_SELECTOR = 'a[href]'
 
+/**
+ * URL 标准化：去除末尾斜杠，统一为小写（仅域名部分）
+ * 确保相同页面不会因为 URL 格式不同而被重复爬取
+ */
+function normalizeUrl(url) {
+    try {
+        const parsed = new URL(url)
+        // 去除末尾斜杠
+        let path = parsed.pathname
+        if (path.endsWith('/') && path.length > 1) {
+            path = path.slice(0, -1)
+        }
+        // 重建 URL
+        return `${parsed.protocol}//${parsed.host}${path}${parsed.search}${parsed.hash}`
+    } catch {
+        return url.replace(/\/$/, '') // 简单去除末尾斜杠
+    }
+}
+
 class WebScraper {
     constructor(config) {
         this.config = { ...DEFAULT_CONFIG, ...config }
@@ -97,14 +116,14 @@ class WebScraper {
             if (Array.isArray(input.url)) {
                 for (const item of input.url) {
                     if (typeof item === 'string') {
-                        urls.push(item.trim())
+                        urls.push(normalizeUrl(item.trim()))
                     } else if (item.url) {
-                        urls.push(item.url.trim())
+                        urls.push(normalizeUrl(item.url.trim()))
                     }
                 }
             } else if (typeof input.url === 'string') {
                 // 单个 URL 字符串
-                urls.push(input.url.trim())
+                urls.push(normalizeUrl(input.url.trim()))
             }
         }
         
@@ -217,16 +236,17 @@ class WebScraper {
             const newLinks = links.filter(link => {
                 if (!link.url) return false
                 try {
-                    const url = new URL(link.url, baseUrl)
+                    const normalizedUrl = normalizeUrl(link.url)
+                    const url = new URL(normalizedUrl, baseUrl)
                     // 只保留同域名链接（可根据需要修改）
-                    return url.origin === new URL(baseUrl).origin
+                    return url.origin === new URL(normalizeUrl(baseUrl)).origin
                 } catch {
                     return false
                 }
-            }).filter(link => !this.visitedUrls.has(link.url))
+            }).filter(link => !this.visitedUrls.has(normalizeUrl(link.url)))
             
             return newLinks.map(link => ({
-                url: link.url,
+                url: normalizeUrl(link.url),
                 depth: currentDepth + 1
             }))
         } catch (err) {
