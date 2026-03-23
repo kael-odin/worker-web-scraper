@@ -45,11 +45,11 @@
       "editor": "select",
       "description": "页面导航完成条件 | Navigation completion condition",
       "default": "networkidle2",
-      "allowedValues": [
-        "load",
-        "domcontentloaded",
-        "networkidle0",
-        "networkidle2"
+      "options": [
+        { "label": "Load | 页面完全加载", "value": "load" },
+        { "label": "DOM Content Loaded | DOM加载完成", "value": "domcontentloaded" },
+        { "label": "Network Idle 0 | 网络空闲0连接", "value": "networkidle0" },
+        { "label": "Network Idle 2 | 网络空闲2连接", "value": "networkidle2" }
       ]
     },
     {
