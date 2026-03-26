@@ -1,8 +1,59 @@
 #!/usr/bin/env node
 'use strict'
 
-const cafesdk = require('./sdk_local')
+/**
+ * 自动检测运行环境并加载正确的 SDK
+ * - 云环境: 使用 ./sdk.js (gRPC SDK)
+ * - 本地环境: 使用 ./sdk_local.js (本地模拟 SDK)
+ * 
+ * 检测优先级：
+ * 1. global.cafesdk 已设置（测试脚本覆盖）
+ * 2. LOCAL_DEV=1 强制使用本地 SDK
+ * 3. 默认尝试云 SDK，失败则回退本地 SDK
+ */
+
 const puppeteer = require('puppeteer')
+
+// 在运行时获取 SDK（而不是加载时）
+function getSDK() {
+    // 优先使用全局覆盖的 SDK（测试脚本可能设置）
+    if (global.cafesdk) {
+        return global.cafesdk;
+    }
+    
+    // 本地开发模式
+    if (process.env.LOCAL_DEV === '1') {
+        return require('./sdk_local');
+    }
+    
+    // Cafe 云环境
+    try {
+        return require('./sdk');
+    } catch (err) {
+        // 如果 gRPC SDK 加载失败，回退到本地 SDK
+        console.log('[WARN] Failed to load gRPC SDK, falling back to local SDK');
+        return require('./sdk_local');
+    }
+}
+
+// 为了兼容直接使用 cafesdk 变量的代码，创建一个 getter
+let _cafesdk = null;
+Object.defineProperty(global, '_auto_cafesdk', {
+    get: function() {
+        if (!_cafesdk) {
+            _cafesdk = getSDK();
+        }
+        return _cafesdk;
+    }
+});
+
+// 导出 SDK 代理
+const cafesdk = new Proxy({}, {
+    get: function(target, prop) {
+        const sdk = getSDK();
+        return sdk[prop];
+    }
+});
 
 /**
  * Web Scraper Worker

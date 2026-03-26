@@ -10,6 +10,9 @@
  *    node local-test-auto.js
  */
 
+// 设置本地开发模式
+process.env.LOCAL_DEV = '1'
+
 const http = require('http')
 
 // 模拟 CafeScraper SDK

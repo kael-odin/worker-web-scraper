@@ -15,6 +15,9 @@
  *    node local-test.js
  */
 
+// 设置本地开发模式
+process.env.LOCAL_DEV = '1'
+
 // 模拟 CafeScraper SDK
 const cafesdk = {
     parameter: {
