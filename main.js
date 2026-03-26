@@ -40,8 +40,9 @@ const LINK_SELECTOR = 'a[href]'
 function normalizeUrl(url) {
     try {
         const parsed = new URL(url)
-        // 去除末尾斜杠
+        // 去除末尾斜杠（但保留根路径的斜杠）
         let path = parsed.pathname
+        // 只移除非根路径的末尾斜杠
         if (path.endsWith('/') && path.length > 1) {
             path = path.slice(0, -1)
         }
@@ -125,15 +126,21 @@ class WebScraper {
         if (input.url) {
             if (Array.isArray(input.url)) {
                 for (const item of input.url) {
+                    // 跳过 null 和 undefined
+                    if (item === null || item === undefined) continue;
+                    
                     if (typeof item === 'string') {
-                        urls.push(normalizeUrl(item.trim()))
-                    } else if (item.url) {
-                        urls.push(normalizeUrl(item.url.trim()))
+                        const trimmed = item.trim();
+                        if (trimmed) urls.push(normalizeUrl(trimmed));
+                    } else if (item && item.url) {
+                        const trimmed = item.url.trim();
+                        if (trimmed) urls.push(normalizeUrl(trimmed));
                     }
                 }
             } else if (typeof input.url === 'string') {
                 // 单个 URL 字符串
-                urls.push(normalizeUrl(input.url.trim()))
+                const trimmed = input.url.trim();
+                if (trimmed) urls.push(normalizeUrl(trimmed));
             }
         }
         
@@ -454,3 +461,6 @@ main().catch(err => {
     console.error('Fatal error:', err)
     process.exit(1)
 })
+
+// 导出用于测试
+module.exports = { WebScraper }
